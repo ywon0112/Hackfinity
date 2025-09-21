@@ -1,4 +1,3 @@
-
 import { LexRuntimeV2Client, RecognizeTextCommand } from "@aws-sdk/client-lex-runtime-v2";
 import { v4 as uuidv4 } from 'uuid';
 
