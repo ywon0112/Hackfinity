@@ -86,8 +86,8 @@ export function AIChatbot() {
       </Button>
 
       {isOpen && (
-        /* Reduced chatbox height and adjusted positioning to prevent exceeding upper page boundary */
-        <Card className="fixed bottom-28 right-6 w-80 h-96 flex flex-col shadow-2xl border-navy/20 z-40">
+        /* Increased chatbox size from w-80 h-96 to w-96 h-[28rem] for slightly bigger dimensions */
+        <Card className="fixed bottom-28 right-6 w-96 h-[28rem] flex flex-col shadow-2xl border-navy/20 z-40">
           <CardHeader className="bg-gradient-to-r from-navy to-blue-900 text-white rounded-t-lg py-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-serif">🏨 JBsuperstar Concierge</CardTitle>
@@ -108,7 +108,7 @@ export function AIChatbot() {
                 <div key={index} className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}>
                   <div
                     className={`px-3 py-2 rounded-lg max-w-[85%] text-sm ${
-                      message.isUser ? "bg-navy text-white" : "bg-white border border-gray-200 text-gray-800"
+                      message.isUser ? "bg-navy text-black" : "bg-white border border-gray-200 text-gray-800"
                     }`}
                   >
                     {message.text}
@@ -147,7 +147,8 @@ export function AIChatbot() {
                 }}
                 placeholder="Ask about rooms, amenities..."
                 disabled={isLoading}
-                className="flex-1 text-sm h-8"
+                /* Added text-black to make input text black instead of white for better visibility */
+                className="flex-1 text-sm h-8 text-black"
               />
               <Button
                 onClick={handleSendMessage}
