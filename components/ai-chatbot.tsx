@@ -79,34 +79,35 @@ export function AIChatbot() {
   return (
     <div>
       <Button
-        className="fixed bottom-6 right-6 rounded-full w-16 h-16 bg-navy hover:bg-navy/90 shadow-lg transition-all duration-300 hover:scale-105"
+        className="fixed bottom-6 right-6 rounded-full w-20 h-20 bg-gradient-to-r from-gold to-yellow-400 hover:from-gold/90 hover:to-yellow-400/90 shadow-2xl transition-all duration-300 hover:scale-110 z-50 animate-pulse border-2 border-white"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <MessageCircle className="w-6 h-6" />
+        <MessageCircle className="w-8 h-8 text-navy" />
       </Button>
 
       {isOpen && (
-        <Card className="fixed bottom-24 right-6 w-96 h-[500px] flex flex-col shadow-2xl border-navy/20">
-          <CardHeader className="bg-navy text-white rounded-t-lg">
+        /* Reduced chatbox height and adjusted positioning to prevent exceeding upper page boundary */
+        <Card className="fixed bottom-28 right-6 w-80 h-96 flex flex-col shadow-2xl border-navy/20 z-40">
+          <CardHeader className="bg-gradient-to-r from-navy to-blue-900 text-white rounded-t-lg py-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-serif">JBsuperstar Concierge</CardTitle>
+              <CardTitle className="text-sm font-serif">🏨 JBsuperstar Concierge</CardTitle>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsOpen(false)}
-                className="text-white hover:bg-white/20 h-8 w-8 p-0"
+                className="text-white hover:bg-white/20 h-6 w-6 p-0"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3 h-3" />
               </Button>
             </div>
           </CardHeader>
 
-          <CardContent className="flex-grow overflow-y-auto p-4 bg-off-white">
-            <div className="space-y-3">
+          <CardContent className="flex-grow overflow-y-auto p-3 bg-off-white">
+            <div className="space-y-2">
               {messages.map((message, index) => (
                 <div key={index} className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}>
                   <div
-                    className={`px-4 py-2 rounded-lg max-w-[80%] ${
+                    className={`px-3 py-2 rounded-lg max-w-[85%] text-sm ${
                       message.isUser ? "bg-navy text-white" : "bg-white border border-gray-200 text-gray-800"
                     }`}
                   >
@@ -116,15 +117,15 @@ export function AIChatbot() {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-white border border-gray-200 text-gray-800 px-4 py-2 rounded-lg">
+                  <div className="bg-white border border-gray-200 text-gray-800 px-3 py-2 rounded-lg">
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
                       <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
                         style={{ animationDelay: "0.1s" }}
                       ></div>
                       <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
                         style={{ animationDelay: "0.2s" }}
                       ></div>
                     </div>
@@ -134,7 +135,7 @@ export function AIChatbot() {
             </div>
           </CardContent>
 
-          <div className="p-4 border-t bg-white rounded-b-lg">
+          <div className="p-3 border-t bg-white rounded-b-lg">
             <div className="flex space-x-2">
               <Input
                 value={inputValue}
@@ -144,16 +145,16 @@ export function AIChatbot() {
                     handleSendMessage()
                   }
                 }}
-                placeholder="Ask about rooms, amenities, or bookings..."
+                placeholder="Ask about rooms, amenities..."
                 disabled={isLoading}
-                className="flex-1"
+                className="flex-1 text-sm h-8"
               />
               <Button
                 onClick={handleSendMessage}
                 disabled={isLoading || inputValue.trim() === ""}
-                className="bg-gold hover:bg-gold/90 text-navy"
+                className="bg-gold hover:bg-gold/90 text-navy h-8 w-8 p-0"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-3 h-3" />
               </Button>
             </div>
           </div>
