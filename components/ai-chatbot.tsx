@@ -1,91 +1,103 @@
-"use client"
 
-import type React from "react"
+"use client";
 
-import { useState } from "react"
-import { MessageCircle, X, Send } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export function AIChatbot() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [message, setMessage] = useState("")
+interface Message {
+  text: string;
+  isUser: boolean;
+}
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen)
-  }
+export default function AiChatbot() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState("");
 
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      // Handle message sending logic here
-      console.log("Sending message:", message)
-      setMessage("")
+  const handleSendMessage = async () => {
+    if (inputValue.trim() === "") return;
+
+    const newMessages = [...messages, { text: inputValue, isUser: true }];
+    setMessages(newMessages);
+    setInputValue("");
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: inputValue }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get response from the bot");
+      }
+
+      const data = await response.json();
+      const botMessage = data.response || "Sorry, I didn't understand that.";
+
+      setMessages([...newMessages, { text: botMessage, isUser: false }]);
+    } catch (error) {
+      console.error("Error communicating with the chatbot:", error);
+      setMessages([...newMessages, { text: "Error: Could not connect to the bot.", isUser: false }]);
     }
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSendMessage()
-    }
-  }
+  };
 
   return (
-    <>
-      {/* Floating Action Button */}
-      <button
-        onClick={toggleChat}
-        className="fixed bottom-6 right-6 w-16 h-16 navy-bg rounded-full flex items-center justify-center shadow-2xl hover:shadow-3xl transition-all duration-300 z-50 hover:scale-105"
-        aria-label="Open chat"
+    <div>
+      <Button
+        className="fixed bottom-4 right-4 rounded-full w-16 h-16"
+        onClick={() => setIsOpen(!isOpen)}
       >
-        <MessageCircle className="w-8 h-8 gold-text" />
-      </button>
-
-      {/* Chat Window */}
+        Chat
+      </Button>
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-80 h-96 bg-white rounded-lg shadow-2xl z-50 flex flex-col overflow-hidden animate-in slide-in-from-bottom-2 duration-300">
-          {/* Header */}
-          <div className="navy-bg text-white p-4 flex items-center justify-between">
-            <h3 className="font-semibold">Hotel Concierge</h3>
-            <button
-              onClick={toggleChat}
-              className="gold-text hover:text-yellow-300 transition-colors"
-              aria-label="Close chat"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Body */}
-          <div className="flex-1 p-4 bg-gray-50 overflow-y-auto">
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <p className="text-sm text-gray-700">
-                How can I assist you today? I'm here to help with reservations, amenities, and any questions about your
-                stay.
-              </p>
+        <Card className="fixed bottom-24 right-4 w-80 h-96 flex flex-col">
+          <CardHeader>
+            <CardTitle>AI Chatbot</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-grow overflow-y-auto">
+            <div className="space-y-4">
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`flex ${
+                    message.isUser ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`px-4 py-2 rounded-lg ${
+                      message.isUser
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted"
+                    }`}
+                  >
+                    {message.text}
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-
-          {/* Input Area */}
-          <div className="p-4 border-t bg-white">
+          </CardContent>
+          <div className="p-4 border-t">
             <div className="flex space-x-2">
               <Input
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Ask me anything..."
-                className="flex-1"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    handleSendMessage();
+                  }
+                }}
+                placeholder="Type your message..."
               />
-              <Button
-                onClick={handleSendMessage}
-                size="sm"
-                className="bg-accent hover:bg-accent/90 text-accent-foreground"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
+              <Button onClick={handleSendMessage}>Send</Button>
             </div>
           </div>
-        </div>
+        </Card>
       )}
-    </>
-  )
+    </div>
+  );
 }
